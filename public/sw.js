@@ -4,11 +4,13 @@ self.addEventListener("push", (event) => {
     self.registration.showNotification(data.title ?? "Klean", {
       body: data.body ?? "Vous avez une tâche en attente",
       icon: "/icons/icon-192.png",
+      data: { url: data.url ?? "/" },
     })
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  event.waitUntil(clients.openWindow("/"));
+  const url = event.notification.data?.url ?? "/";
+  event.waitUntil(clients.openWindow(url));
 });
