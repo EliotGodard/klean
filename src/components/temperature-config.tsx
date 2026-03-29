@@ -191,14 +191,17 @@ export function TemperatureConfig({
   return (
     <>
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Heure de relevé</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Températures</CardTitle>
+          <Button size="sm" onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-1" />
+            Ajouter
+          </Button>
         </CardHeader>
-
         <CardContent>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4 pb-4 border-b">
             <Label htmlFor="global-heure" className="text-sm shrink-0">
-              Heure de relevé pour tous les équipements
+              Heure de relevé
             </Label>
             <Input
               id="global-heure"
@@ -216,18 +219,6 @@ export function TemperatureConfig({
               {saving ? "…" : "Enregistrer"}
             </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Températures</CardTitle>
-          <Button size="sm" onClick={openAdd}>
-            <Plus className="h-4 w-4 mr-1" />
-            Ajouter
-          </Button>
-        </CardHeader>
-        <CardContent>
           {equipements.length === 0 ? (
             <p className="text-sm text-gray-500">
               Aucun équipement configuré.
