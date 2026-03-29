@@ -233,7 +233,7 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
     <>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Équipements</CardTitle>
+          <CardTitle className="text-base">Nettoyage</CardTitle>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={() => setCatDialogOpen(true)}>
               <Plus className="h-3 w-3 mr-1" />

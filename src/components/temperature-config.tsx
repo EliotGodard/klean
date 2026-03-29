@@ -221,7 +221,7 @@ export function TemperatureConfig({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Équipements</CardTitle>
+          <CardTitle className="text-base">Températures</CardTitle>
           <Button size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" />
             Ajouter

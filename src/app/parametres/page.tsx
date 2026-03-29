@@ -22,14 +22,8 @@ export default function ParametresPage() {
           </h2>
           <div className="space-y-6">
             <GestionFournisseurs />
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-400">Température</h3>
-              <TemperatureConfig />
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium text-gray-400">Nettoyage</h3>
-              <NettoyageConfig />
-            </div>
+            <TemperatureConfig />
+            <NettoyageConfig />
           </div>
         </section>
         <section>
