@@ -44,10 +44,10 @@ interface Releve {
 }
 
 const ACTIONS_CORRECTIVES = [
-  "Appeler le technicien",
-  "Déplacer les produits",
+  "Appeler technicien",
+  "Déplacer produit",
+  "Détruire produit",
   "Régler le thermostat",
-  "Vérifier la fermeture de porte",
   "Autre",
 ];
 
