@@ -194,6 +194,7 @@ export function TemperatureConfig({
         <CardHeader>
           <CardTitle className="text-base">Heure de relevé</CardTitle>
         </CardHeader>
+
         <CardContent>
           <div className="flex items-center gap-3">
             <Label htmlFor="global-heure" className="text-sm shrink-0">
@@ -220,7 +221,7 @@ export function TemperatureConfig({
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Équipements de température</CardTitle>
+          <CardTitle className="text-base">Équipements</CardTitle>
           <Button size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" />
             Ajouter
