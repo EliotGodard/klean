@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -206,7 +206,13 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-500 p-4">Chargement…</p>;
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-sm text-gray-500">Chargement…</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   // Group equipements by categorie
@@ -223,94 +229,110 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
 
   return (
     <>
-      <div className="p-4 space-y-4">
-        {/* Categories management */}
-        <div className="flex items-center justify-between">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <Badge key={c.id} variant="secondary" className="flex items-center gap-1">
-                {c.nom}
-                <button
-                  onClick={() => deleteCategorie(c.id)}
-                  className="ml-1 hover:text-red-500"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </Badge>
-            ))}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Nettoyage</CardTitle>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setCatDialogOpen(true)}>
+              <Plus className="h-3 w-3 mr-1" />
+              Catégorie
+            </Button>
+            <Button size="sm" onClick={openAdd} disabled={categories.length === 0}>
+              <Plus className="h-4 w-4 mr-1" />
+              Ajouter
+            </Button>
           </div>
-          <Button size="sm" variant="outline" onClick={() => setCatDialogOpen(true)}>
-            <Plus className="h-3 w-3 mr-1" />
-            Catégorie
-          </Button>
-        </div>
-
-        <div className="flex justify-end">
-          <Button size="sm" onClick={openAdd} disabled={categories.length === 0}>
-            <Plus className="h-4 w-4 mr-1" />
-            Équipement
-          </Button>
-        </div>
-
-        {categories.length === 0 && (
-          <p className="text-sm text-gray-500">
-            Créez d&apos;abord une catégorie (ex : Cuisine, Salle, Sanitaires).
-          </p>
-        )}
-
-        {grouped.map((group) => (
-          <div key={group.id}>
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-              {group.nom}
-            </h3>
-            <div className="space-y-2">
-              {group.equipements.map((e) => (
-                <Card key={e.id}>
-                  <CardContent className="flex items-center justify-between p-3">
-                    <div>
-                      <p className="font-medium text-sm">{e.nom}</p>
-                      <p className="text-xs text-gray-500 capitalize">
-                        {e.frequence}
-                        {e.jours && e.jours.length > 0 && (
-                          <> · {e.jours.map((j) => JOURS.find((d) => d.value === j)?.label).join(", ")}</>
-                        )}
-                      </p>
-                    </div>
-                    <div className="flex gap-1 ml-2 shrink-0">
-                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(e)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-red-500 hover:text-red-600"
-                        onClick={() => { setDeleting(e); setDeleteDialogOpen(true); }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+        </CardHeader>
+        <CardContent>
+          {/* Categories badges */}
+          {categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {categories.map((c) => (
+                <Badge key={c.id} variant="secondary" className="flex items-center gap-1">
+                  {c.nom}
+                  <button
+                    onClick={() => deleteCategorie(c.id)}
+                    className="ml-1 hover:text-red-500"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
               ))}
             </div>
-          </div>
-        ))}
+          )}
 
-        {ungrouped.length > 0 && (
-          <div>
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-2">
-              Sans catégorie
-            </h3>
-            {ungrouped.map((e) => (
-              <Card key={e.id}>
-                <CardContent className="flex items-center justify-between p-3">
-                  <p className="font-medium text-sm">{e.nom}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
-      </div>
+          {categories.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              Créez d&apos;abord une catégorie (ex : Cuisine, Salle, Sanitaires).
+            </p>
+          ) : equipements.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              Aucun équipement configuré.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {grouped.map((group) => (
+                <div key={group.id}>
+                  <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                    {group.nom}
+                  </h3>
+                  <div className="space-y-3">
+                    {group.equipements.map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-start justify-between rounded-lg border p-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm">{e.nom}</p>
+                          <p className="text-xs text-gray-500 capitalize mt-1">
+                            {e.frequence}
+                            {e.jours && e.jours.length > 0 && (
+                              <> · {e.jours.map((j) => JOURS.find((d) => d.value === j)?.label).join(", ")}</>
+                            )}
+                          </p>
+                        </div>
+                        <div className="flex gap-1 ml-2 shrink-0">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(e)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-600"
+                            onClick={() => { setDeleting(e); setDeleteDialogOpen(true); }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              {ungrouped.length > 0 && (
+                <div>
+                  <h3 className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                    Sans catégorie
+                  </h3>
+                  <div className="space-y-3">
+                    {ungrouped.map((e) => (
+                      <div
+                        key={e.id}
+                        className="flex items-start justify-between rounded-lg border p-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-sm">{e.nom}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Add categorie dialog */}
       <Dialog open={catDialogOpen} onOpenChange={setCatDialogOpen}>

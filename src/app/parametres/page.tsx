@@ -18,21 +18,13 @@ export default function ParametresPage() {
         </section>
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
-            Température
-          </h2>
-          <TemperatureConfig />
-        </section>
-        <section>
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
-            Nettoyage
-          </h2>
-          <NettoyageConfig />
-        </section>
-        <section>
-          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
             Référentiel
           </h2>
-          <GestionFournisseurs />
+          <div className="space-y-4">
+            <GestionFournisseurs />
+            <TemperatureConfig />
+            <NettoyageConfig />
+          </div>
         </section>
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
