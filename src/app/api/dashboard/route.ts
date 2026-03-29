@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
 export async function GET() {
-  const today = new Date().toISOString().split("T")[0];
-  const jsDay = new Date().getDay();
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
+  const jsDay = now.getDay();
   const dayOfWeek = jsDay === 0 ? 7 : jsDay;
+  const dayOfMonth = now.getDate();
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 
   try {
     // All queries in parallel
@@ -39,6 +42,11 @@ export async function GET() {
       equipNettRes.data?.filter((e) => {
         if (e.frequence === "quotidien") return true;
         if (!e.jours || e.jours.length === 0) return false;
+        if (e.frequence === "mensuel") {
+          const targetDay = e.jours[0];
+          if (targetDay > lastDayOfMonth) return dayOfMonth === lastDayOfMonth;
+          return dayOfMonth === targetDay;
+        }
         return e.jours.includes(dayOfWeek);
       }) ?? [];
     const nettTotal = nettDueToday.length;

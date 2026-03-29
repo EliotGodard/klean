@@ -44,7 +44,7 @@ const FREQUENCES = [
   { value: "mensuel", label: "Mensuel" },
 ];
 
-const JOURS = [
+const JOURS_SEMAINE = [
   { value: 1, label: "Lun" },
   { value: 2, label: "Mar" },
   { value: 3, label: "Mer" },
@@ -53,6 +53,8 @@ const JOURS = [
   { value: 6, label: "Sam" },
   { value: 7, label: "Dim" },
 ];
+
+const JOURS_MOIS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 const emptyForm = {
   nom: "",
@@ -286,8 +288,11 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
                           <p className="font-medium text-sm">{e.nom}</p>
                           <p className="text-xs text-gray-500 capitalize mt-1">
                             {e.frequence}
-                            {e.jours && e.jours.length > 0 && (
-                              <> · {e.jours.map((j) => JOURS.find((d) => d.value === j)?.label).join(", ")}</>
+                            {e.jours && e.jours.length > 0 && e.frequence === "hebdomadaire" && (
+                              <> · {e.jours.map((j) => JOURS_SEMAINE.find((d) => d.value === j)?.label).join(", ")}</>
+                            )}
+                            {e.jours && e.jours.length > 0 && e.frequence === "mensuel" && (
+                              <> · le {e.jours[0]}</>
                             )}
                           </p>
                         </div>
@@ -400,7 +405,7 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
               <Label>Fréquence *</Label>
               <Select
                 value={form.frequence}
-                onValueChange={(v) => v && setForm({ ...form, frequence: v })}
+                onValueChange={(v) => v && setForm({ ...form, frequence: v, jours: [] })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -414,11 +419,11 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
                 </SelectContent>
               </Select>
             </div>
-            {form.frequence !== "quotidien" && (
+            {form.frequence === "hebdomadaire" && (
               <div>
-                <Label className="mb-2 block">Jours</Label>
+                <Label className="mb-2 block">Jours de la semaine</Label>
                 <div className="flex flex-wrap gap-3">
-                  {JOURS.map(({ value, label }) => (
+                  {JOURS_SEMAINE.map(({ value, label }) => (
                     <div key={value} className="flex items-center gap-1.5">
                       <Checkbox
                         id={`jour-nett-${value}`}
@@ -436,6 +441,29 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+            {form.frequence === "mensuel" && (
+              <div>
+                <Label className="mb-2 block">Jour du mois</Label>
+                <Select
+                  value={form.jours.length > 0 ? String(form.jours[0]) : ""}
+                  onValueChange={(v) => v && setForm({ ...form, jours: [Number(v)] })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choisir…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {JOURS_MOIS.map((d) => (
+                      <SelectItem key={d} value={String(d)}>
+                        {d}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Si le jour dépasse la fin du mois, le nettoyage sera déclenché le dernier jour du mois.
+                </p>
               </div>
             )}
           </div>

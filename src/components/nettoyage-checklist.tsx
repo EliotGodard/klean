@@ -28,9 +28,17 @@ interface Validation {
   valide: boolean;
 }
 
-function isDueToday(eq: Equipement, dayOfWeek: number): boolean {
+function isDueToday(eq: Equipement, dayOfWeek: number, today: Date): boolean {
   if (eq.frequence === "quotidien") return true;
   if (!eq.jours || eq.jours.length === 0) return false;
+  if (eq.frequence === "mensuel") {
+    const dayOfMonth = today.getDate();
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const targetDay = eq.jours[0];
+    // If target day exceeds last day of month, trigger on last day
+    if (targetDay > lastDayOfMonth) return dayOfMonth === lastDayOfMonth;
+    return dayOfMonth === targetDay;
+  }
   return eq.jours.includes(dayOfWeek);
 }
 
@@ -40,9 +48,10 @@ export function NettoyageChecklist() {
   const [validations, setValidations] = useState<Validation[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const today = new Date().toISOString().split("T")[0];
+  const now = new Date();
+  const today = now.toISOString().split("T")[0];
   // JS: 0=Sunday, convert to 1=Monday...7=Sunday
-  const jsDay = new Date().getDay();
+  const jsDay = now.getDay();
   const dayOfWeek = jsDay === 0 ? 7 : jsDay;
 
   const load = useCallback(async () => {
@@ -66,7 +75,7 @@ export function NettoyageChecklist() {
     load();
   }, [load]);
 
-  const dueToday = equipements.filter((e) => isDueToday(e, dayOfWeek));
+  const dueToday = equipements.filter((e) => isDueToday(e, dayOfWeek, now));
   const doneCount = dueToday.filter((e) =>
     validations.find((v) => v.equipement_id === e.id && v.valide)
   ).length;
