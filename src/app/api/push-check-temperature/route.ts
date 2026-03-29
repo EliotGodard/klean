@@ -30,10 +30,10 @@ export async function POST() {
     hour12: false,
   });
 
-  // Check opening days
+  // Check opening days and global reading time
   const { data: config } = await supabase
     .from("configuration")
-    .select("jours_ouverture, fermetures_exceptionnelles")
+    .select("jours_ouverture, fermetures_exceptionnelles, heure_releve_temperature")
     .single();
 
   if (config) {
@@ -47,11 +47,16 @@ export async function POST() {
     }
   }
 
-  // Get equipment where heure_releve <= now
+  // Check if global reading time has passed
+  const heureReleve = config?.heure_releve_temperature ?? "08:00";
+  if (now < heureReleve) {
+    return NextResponse.json({ message: "Heure de relevé non atteinte", sent: 0 });
+  }
+
+  // Get all equipment
   const { data: equipements } = await supabase
     .from("equipements_temperature")
-    .select("id, nom, heure_releve")
-    .lte("heure_releve", now);
+    .select("id, nom");
 
   if (!equipements || equipements.length === 0) {
     return NextResponse.json({ message: "Aucun équipement à vérifier", sent: 0 });

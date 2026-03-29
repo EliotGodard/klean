@@ -24,6 +24,7 @@ export async function PUT(request: Request) {
       fermetures_exceptionnelles: body.fermetures_exceptionnelles,
       frequence_analyse_surfaces: body.frequence_analyse_surfaces,
       jour_analyse_surfaces: body.jour_analyse_surfaces,
+      heure_releve_temperature: body.heure_releve_temperature,
       updated_at: new Date().toISOString(),
     })
     .eq("id", body.id)

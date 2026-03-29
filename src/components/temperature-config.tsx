@@ -21,7 +21,11 @@ interface Equipement {
   emplacement: string | null;
   temp_min: number;
   temp_max: number;
-  heure_releve: string;
+}
+
+interface Configuration {
+  id: string;
+  heure_releve_temperature: string;
 }
 
 const emptyForm = {
@@ -29,7 +33,6 @@ const emptyForm = {
   emplacement: "",
   temp_min: "",
   temp_max: "",
-  heure_releve: "08:00",
 };
 
 export function TemperatureConfig({
@@ -38,6 +41,8 @@ export function TemperatureConfig({
   onUpdate?: () => void;
 }) {
   const [equipements, setEquipements] = useState<Equipement[]>([]);
+  const [config, setConfig] = useState<Configuration | null>(null);
+  const [heureReleve, setHeureReleve] = useState("08:00");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -48,8 +53,14 @@ export function TemperatureConfig({
 
   async function load() {
     try {
-      const res = await fetch("/api/equipements-temperature");
-      setEquipements(await res.json());
+      const [eqRes, cfgRes] = await Promise.all([
+        fetch("/api/equipements-temperature"),
+        fetch("/api/configuration"),
+      ]);
+      setEquipements(await eqRes.json());
+      const cfg = await cfgRes.json();
+      setConfig(cfg);
+      setHeureReleve(cfg.heure_releve_temperature?.slice(0, 5) ?? "08:00");
     } catch {
       toast.error("Erreur lors du chargement");
     } finally {
@@ -74,7 +85,6 @@ export function TemperatureConfig({
       emplacement: e.emplacement || "",
       temp_min: String(e.temp_min),
       temp_max: String(e.temp_max),
-      heure_releve: e.heure_releve,
     });
     setDialogOpen(true);
   }
@@ -104,7 +114,6 @@ export function TemperatureConfig({
         emplacement: form.emplacement,
         temp_min: min,
         temp_max: max,
-        heure_releve: form.heure_releve,
       };
 
       const res = await fetch("/api/equipements-temperature", {
@@ -118,6 +127,27 @@ export function TemperatureConfig({
       setDialogOpen(false);
       load();
       onUpdate?.();
+    } catch {
+      toast.error("Erreur lors de la sauvegarde");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveHeureReleve(heure: string) {
+    if (!config) return;
+    setSaving(true);
+    try {
+      const res = await fetch("/api/configuration", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...config, heure_releve_temperature: heure }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setConfig(data);
+      setHeureReleve(data.heure_releve_temperature?.slice(0, 5) ?? "08:00");
+      toast.success("Heure de relevé enregistrée");
     } catch {
       toast.error("Erreur lors de la sauvegarde");
     } finally {
@@ -161,6 +191,34 @@ export function TemperatureConfig({
   return (
     <>
       <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Heure de relevé</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-3">
+            <Label htmlFor="global-heure" className="text-sm shrink-0">
+              Heure de relevé pour tous les équipements
+            </Label>
+            <Input
+              id="global-heure"
+              type="time"
+              className="w-32"
+              value={heureReleve}
+              onChange={(e) => setHeureReleve(e.target.value)}
+              disabled={saving}
+            />
+            <Button
+              size="sm"
+              onClick={() => saveHeureReleve(heureReleve)}
+              disabled={saving || heureReleve === (config?.heure_releve_temperature?.slice(0, 5) ?? "08:00")}
+            >
+              {saving ? "…" : "Enregistrer"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Équipements de température</CardTitle>
           <Button size="sm" onClick={openAdd}>
@@ -186,7 +244,7 @@ export function TemperatureConfig({
                       <p className="text-xs text-gray-500 mt-1">{e.emplacement}</p>
                     )}
                     <p className="text-xs text-gray-500 mt-1">
-                      {e.temp_min}°C — {e.temp_max}°C · Relevé à {e.heure_releve.slice(0, 5)}
+                      {e.temp_min}°C — {e.temp_max}°C
                     </p>
                   </div>
                   <div className="flex gap-1 ml-2 shrink-0">
@@ -270,17 +328,6 @@ export function TemperatureConfig({
                   }
                 />
               </div>
-            </div>
-            <div>
-              <Label htmlFor="eq-heure">Heure de relevé *</Label>
-              <Input
-                id="eq-heure"
-                type="time"
-                value={form.heure_releve}
-                onChange={(e) =>
-                  setForm({ ...form, heure_releve: e.target.value })
-                }
-              />
             </div>
           </div>
           <DialogFooter>

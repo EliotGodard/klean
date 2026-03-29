@@ -24,7 +24,6 @@ export async function POST(request: Request) {
       emplacement: body.emplacement || null,
       temp_min: body.temp_min,
       temp_max: body.temp_max,
-      heure_releve: body.heure_releve,
     })
     .select()
     .single();
@@ -46,7 +45,6 @@ export async function PUT(request: Request) {
       emplacement: body.emplacement || null,
       temp_min: body.temp_min,
       temp_max: body.temp_max,
-      heure_releve: body.heure_releve,
     })
     .eq("id", body.id)
     .select()

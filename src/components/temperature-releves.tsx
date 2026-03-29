@@ -30,7 +30,6 @@ interface Equipement {
   emplacement: string | null;
   temp_min: number;
   temp_max: number;
-  heure_releve: string;
 }
 
 interface Releve {
