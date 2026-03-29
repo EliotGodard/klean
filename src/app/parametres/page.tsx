@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/page-header";
 import { JoursOuverture } from "@/components/jours-ouverture";
 import { GestionFournisseurs } from "@/components/gestion-fournisseurs";
 import { NotificationsToggle } from "@/components/notifications-toggle";
+import { TemperatureConfig } from "@/components/temperature-config";
 
 export default function ParametresPage() {
   return (
@@ -13,6 +14,12 @@ export default function ParametresPage() {
             Établissement
           </h2>
           <JoursOuverture />
+        </section>
+        <section>
+          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+            Température
+          </h2>
+          <TemperatureConfig />
         </section>
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
