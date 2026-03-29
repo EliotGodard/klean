@@ -3,6 +3,7 @@ import { JoursOuverture } from "@/components/jours-ouverture";
 import { GestionFournisseurs } from "@/components/gestion-fournisseurs";
 import { NotificationsToggle } from "@/components/notifications-toggle";
 import { TemperatureConfig } from "@/components/temperature-config";
+import { NettoyageConfig } from "@/components/nettoyage-config";
 
 export default function ParametresPage() {
   return (
@@ -20,6 +21,12 @@ export default function ParametresPage() {
             Température
           </h2>
           <TemperatureConfig />
+        </section>
+        <section>
+          <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
+            Nettoyage
+          </h2>
+          <NettoyageConfig />
         </section>
         <section>
           <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide mb-3">
