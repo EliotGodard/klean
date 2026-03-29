@@ -59,7 +59,6 @@ export function TemperatureReleves() {
   // Saisie dialog
   const [dialogOpen, setDialogOpen] = useState(false);
   const [current, setCurrent] = useState<Equipement | null>(null);
-  const [saisieMode, setSaisieMode] = useState<"rapide" | "valeur">("rapide");
   const [valeur, setValeur] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -101,7 +100,6 @@ export function TemperatureReleves() {
   function openSaisie(eq: Equipement) {
     if (getReleve(eq.id)) return; // already done
     setCurrent(eq);
-    setSaisieMode("rapide");
     setValeur("");
     setDialogOpen(true);
   }
@@ -136,23 +134,6 @@ export function TemperatureReleves() {
       toast.error("Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
-    }
-  }
-
-  function handleRapide(conforme: boolean) {
-    if (!current) return;
-    if (!conforme) {
-      setPendingReleve({
-        equipement_id: current.id,
-        valeur: null,
-        conforme: false,
-      });
-      setActionCorrective("");
-      setCommentaire("");
-      setDialogOpen(false);
-      setCorrectiveOpen(true);
-    } else {
-      saveReleve(current.id, null, true, null, null);
     }
   }
 
@@ -235,6 +216,14 @@ export function TemperatureReleves() {
                   <p className="text-xs text-gray-400">
                     {eq.temp_min}°C — {eq.temp_max}°C
                   </p>
+                  {releve && releve.valeur !== null && (
+                    <p className={cn(
+                      "text-sm font-semibold mt-1",
+                      releve.conforme ? "text-green-600" : "text-red-600"
+                    )}>
+                      {releve.valeur}°C
+                    </p>
+                  )}
                 </div>
                 <div className="shrink-0 ml-2">
                   {releve ? (
@@ -265,66 +254,26 @@ export function TemperatureReleves() {
                 Seuils : {current.temp_min}°C — {current.temp_max}°C
               </p>
 
-              <div className="flex gap-2">
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="temp-val">Température mesurée (°C)</Label>
+                  <Input
+                    id="temp-val"
+                    type="number"
+                    step="0.1"
+                    value={valeur}
+                    onChange={(e) => setValeur(e.target.value)}
+                    placeholder="Ex : 3.5"
+                  />
+                </div>
                 <Button
-                  variant={saisieMode === "rapide" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSaisieMode("rapide")}
+                  className="w-full"
+                  onClick={handleValeur}
+                  disabled={saving || !valeur}
                 >
-                  Rapide (OK/KO)
-                </Button>
-                <Button
-                  variant={saisieMode === "valeur" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSaisieMode("valeur")}
-                >
-                  Valeur mesurée
+                  Enregistrer
                 </Button>
               </div>
-
-              {saisieMode === "rapide" ? (
-                <div className="flex gap-3">
-                  <Button
-                    className="flex-1"
-                    variant="outline"
-                    onClick={() => handleRapide(true)}
-                    disabled={saving}
-                  >
-                    <CheckCircle2 className="h-4 w-4 mr-2 text-green-500" />
-                    OK
-                  </Button>
-                  <Button
-                    className="flex-1"
-                    variant="outline"
-                    onClick={() => handleRapide(false)}
-                    disabled={saving}
-                  >
-                    <AlertTriangle className="h-4 w-4 mr-2 text-red-500" />
-                    KO
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor="temp-val">Température mesurée (°C)</Label>
-                    <Input
-                      id="temp-val"
-                      type="number"
-                      step="0.1"
-                      value={valeur}
-                      onChange={(e) => setValeur(e.target.value)}
-                      placeholder="Ex : 3.5"
-                    />
-                  </div>
-                  <Button
-                    className="w-full"
-                    onClick={handleValeur}
-                    disabled={saving || !valeur}
-                  >
-                    Enregistrer
-                  </Button>
-                </div>
-              )}
             </div>
           )}
         </DialogContent>
