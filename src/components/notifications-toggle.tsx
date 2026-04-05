@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { Button } from "@/components/ui/button";
 import { Bell, BellOff } from "lucide-react";
 import { toast } from "sonner";
@@ -88,25 +88,17 @@ export function NotificationsToggle() {
 
   if (!supported) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Notifications</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-500">
-            Les notifications push ne sont pas supportées par ce navigateur.
-          </p>
-        </CardContent>
-      </Card>
+      <CollapsibleCard title="Notifications">
+        <p className="text-sm text-gray-500">
+          Les notifications push ne sont pas supportées par ce navigateur.
+        </p>
+      </CollapsibleCard>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Notifications</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
+    <CollapsibleCard title="Notifications">
+      <div className="space-y-3">
         <p className="text-sm text-gray-500">
           Recevez un rappel si un relevé de température n&apos;a pas été
           effectué à l&apos;heure prévue.
@@ -129,7 +121,7 @@ export function NotificationsToggle() {
             </>
           )}
         </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </CollapsibleCard>
   );
 }

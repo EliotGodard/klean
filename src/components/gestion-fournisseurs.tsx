@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -143,78 +143,73 @@ export function GestionFournisseurs() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-sm text-gray-500">Chargement…</p>
-        </CardContent>
-      </Card>
+      <CollapsibleCard title="Fournisseurs">
+        <p className="text-sm text-gray-500">Chargement…</p>
+      </CollapsibleCard>
     );
   }
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Fournisseurs</CardTitle>
+      <CollapsibleCard title="Fournisseurs">
+        <div className="flex justify-end mb-3">
           <Button size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" />
             Ajouter
           </Button>
-        </CardHeader>
-        <CardContent>
-          {fournisseurs.length === 0 ? (
-            <p className="text-sm text-gray-500">
-              Aucun fournisseur enregistré.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {fournisseurs.map((f) => (
-                <div
-                  key={f.id}
-                  className="flex items-start justify-between rounded-lg border p-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">{f.nom}</p>
-                    {f.categorie_produits && (
-                      <Badge variant="secondary" className="mt-1 text-xs">
-                        {f.categorie_produits}
-                      </Badge>
-                    )}
-                    {(f.telephone || f.email) && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        {[f.telephone, f.email].filter(Boolean).join(" · ")}
-                      </p>
-                    )}
-                    {f.numero_agrement && (
-                      <p className="text-xs text-gray-400 mt-0.5">
-                        Agrément : {f.numero_agrement}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex gap-1 ml-2 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => openEdit(f)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-500 hover:text-red-600"
-                      onClick={() => openDelete(f)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+        </div>
+        {fournisseurs.length === 0 ? (
+          <p className="text-sm text-gray-500">
+            Aucun fournisseur enregistré.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {fournisseurs.map((f) => (
+              <div
+                key={f.id}
+                className="flex items-start justify-between rounded-lg border p-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-sm">{f.nom}</p>
+                  {f.categorie_produits && (
+                    <Badge variant="secondary" className="mt-1 text-xs">
+                      {f.categorie_produits}
+                    </Badge>
+                  )}
+                  {(f.telephone || f.email) && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      {[f.telephone, f.email].filter(Boolean).join(" · ")}
+                    </p>
+                  )}
+                  {f.numero_agrement && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Agrément : {f.numero_agrement}
+                    </p>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <div className="flex gap-1 ml-2 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => openEdit(f)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-500 hover:text-red-600"
+                    onClick={() => openDelete(f)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CollapsibleCard>
 
       {/* Add / Edit dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

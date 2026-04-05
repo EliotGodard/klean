@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -180,92 +180,88 @@ export function TemperatureConfig({
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-sm text-gray-500">Chargement…</p>
-        </CardContent>
-      </Card>
+      <CollapsibleCard title="Températures">
+        <p className="text-sm text-gray-500">Chargement…</p>
+      </CollapsibleCard>
     );
   }
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Températures</CardTitle>
+      <CollapsibleCard title="Températures">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b">
+          <Label htmlFor="global-heure" className="text-sm shrink-0">
+            Heure de relevé
+          </Label>
+          <Input
+            id="global-heure"
+            type="time"
+            className="flex-1"
+            value={heureReleve}
+            onChange={(e) => setHeureReleve(e.target.value)}
+            disabled={saving}
+          />
+          <Button
+            size="sm"
+            className="shrink-0"
+            onClick={() => saveHeureReleve(heureReleve)}
+            disabled={saving || heureReleve === (config?.heure_releve_temperature?.slice(0, 5) ?? "08:00")}
+          >
+            {saving ? "…" : "Enregistrer"}
+          </Button>
+        </div>
+        <div className="flex justify-end mb-3">
           <Button size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" />
             Ajouter
           </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-3 mb-4 pb-4 border-b">
-            <Label htmlFor="global-heure" className="text-sm shrink-0">
-              Heure de relevé
-            </Label>
-            <Input
-              id="global-heure"
-              type="time"
-              className="w-32"
-              value={heureReleve}
-              onChange={(e) => setHeureReleve(e.target.value)}
-              disabled={saving}
-            />
-            <Button
-              size="sm"
-              onClick={() => saveHeureReleve(heureReleve)}
-              disabled={saving || heureReleve === (config?.heure_releve_temperature?.slice(0, 5) ?? "08:00")}
-            >
-              {saving ? "…" : "Enregistrer"}
-            </Button>
-          </div>
-          {equipements.length === 0 ? (
-            <p className="text-sm text-gray-500">
-              Aucun équipement configuré.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {equipements.map((e) => (
-                <div
-                  key={e.id}
-                  className="flex items-start justify-between rounded-lg border p-3"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-sm">{e.nom}</p>
-                    {e.emplacement && (
-                      <p className="text-xs text-gray-500 mt-1">{e.emplacement}</p>
-                    )}
-                    <p className="text-xs text-gray-500 mt-1">
-                      {e.temp_min}°C — {e.temp_max}°C
-                    </p>
-                  </div>
-                  <div className="flex gap-1 ml-2 shrink-0">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => openEdit(e)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-500 hover:text-red-600"
-                      onClick={() => {
-                        setDeleting(e);
-                        setDeleteDialogOpen(true);
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
+        </div>
+        {equipements.length === 0 ? (
+          <p className="text-sm text-gray-500">
+            Aucun équipement configuré.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {equipements.map((e) => (
+              <div
+                key={e.id}
+                className="flex items-start justify-between rounded-lg border p-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-sm">{e.nom}</p>
+                  {e.emplacement && (
+                    <p className="text-xs text-gray-500 mt-1">{e.emplacement}</p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-1">
+                    {e.temp_min}°C — {e.temp_max}°C
+                  </p>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                <div className="flex gap-1 ml-2 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => openEdit(e)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-500 hover:text-red-600"
+                    onClick={() => {
+                      setDeleting(e);
+                      setDeleteDialogOpen(true);
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CollapsibleCard>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>

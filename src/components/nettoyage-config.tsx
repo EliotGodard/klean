@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -209,11 +209,9 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-sm text-gray-500">Chargement…</p>
-        </CardContent>
-      </Card>
+      <CollapsibleCard title="Nettoyage">
+        <p className="text-sm text-gray-500">Chargement…</p>
+      </CollapsibleCard>
     );
   }
 
@@ -231,21 +229,17 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
 
   return (
     <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Nettoyage</CardTitle>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={() => setCatDialogOpen(true)}>
-              <Plus className="h-3 w-3 mr-1" />
-              Catégorie
-            </Button>
-            <Button size="sm" onClick={openAdd} disabled={categories.length === 0}>
-              <Plus className="h-4 w-4 mr-1" />
-              Ajouter
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
+      <CollapsibleCard title="Nettoyage">
+        <div className="flex justify-end gap-2 mb-3">
+          <Button size="sm" variant="outline" onClick={() => setCatDialogOpen(true)}>
+            <Plus className="h-3 w-3 mr-1" />
+            Catégorie
+          </Button>
+          <Button size="sm" onClick={openAdd} disabled={categories.length === 0}>
+            <Plus className="h-4 w-4 mr-1" />
+            Ajouter
+          </Button>
+        </div>
           {/* Categories badges */}
           {categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -336,8 +330,7 @@ export function NettoyageConfig({ onUpdate }: { onUpdate?: () => void }) {
               )}
             </div>
           )}
-        </CardContent>
-      </Card>
+      </CollapsibleCard>
 
       {/* Add categorie dialog */}
       <Dialog open={catDialogOpen} onOpenChange={setCatDialogOpen}>

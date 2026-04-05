@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CollapsibleCard } from "@/components/ui/collapsible-card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -108,22 +108,17 @@ export function JoursOuverture() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-sm text-gray-500">Chargement…</p>
-        </CardContent>
-      </Card>
+      <CollapsibleCard title="Jours d'ouverture">
+        <p className="text-sm text-gray-500">Chargement…</p>
+      </CollapsibleCard>
     );
   }
 
   if (!config) return null;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-base">Jours d&apos;ouverture</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <CollapsibleCard title="Jours d'ouverture">
+      <div className="space-y-6">
         <div className="grid grid-cols-2 gap-3">
           {JOURS.map(({ value, label }) => (
             <div key={value} className="flex items-center gap-2">
@@ -184,7 +179,7 @@ export function JoursOuverture() {
             </div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </CollapsibleCard>
   );
 }
