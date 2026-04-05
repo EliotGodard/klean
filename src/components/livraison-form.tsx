@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CheckCircle2, AlertTriangle, ArrowLeft } from "lucide-react";
+import { CheckCircle2, AlertTriangle, ArrowLeft, Camera, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface Fournisseur {
@@ -48,6 +48,7 @@ export function LivraisonForm({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState<Step>("fournisseur");
   const [fournisseurId, setFournisseurId] = useState("");
   const [commentaire, setCommentaire] = useState("");
+  const [photos, setPhotos] = useState<{ file: File; preview: string }[]>([]);
   const [raisons, setRaisons] = useState<string[]>([]);
   const [actionCorrective, setActionCorrective] = useState("");
 
@@ -78,6 +79,15 @@ export function LivraisonForm({ onDone }: { onDone: () => void }) {
         body: JSON.stringify(body),
       });
       if (!res.ok) throw new Error();
+      const livraison = await res.json();
+
+      // Upload photos
+      for (const { file } of photos) {
+        const fd = new FormData();
+        fd.append("livraison_id", livraison.id);
+        fd.append("photo", file);
+        await fetch("/api/livraisons/photos", { method: "POST", body: fd });
+      }
 
       toast.success(
         conforme ? "Livraison conforme enregistrée" : "Non-conformité enregistrée"
@@ -108,6 +118,25 @@ export function LivraisonForm({ onDone }: { onDone: () => void }) {
       return;
     }
     saveLivraison(false);
+  }
+
+  function handleAddPhotos(e: React.ChangeEvent<HTMLInputElement>) {
+    const newFiles = Array.from(e.target.files || []);
+    if (newFiles.length > 0) {
+      const entries = newFiles.map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+      setPhotos((prev) => [...prev, ...entries]);
+    }
+    e.target.value = "";
+  }
+
+  function removePhoto(index: number) {
+    setPhotos((prev) => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
   }
 
   function toggleRaison(raison: string) {
@@ -185,6 +214,43 @@ export function LivraisonForm({ onDone }: { onDone: () => void }) {
               onChange={(e) => setCommentaire(e.target.value)}
               placeholder="Observations…"
             />
+          </div>
+          <div>
+            <Label>Photos (optionnel)</Label>
+            <div className="mt-1 space-y-2">
+              {photos.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {photos.map(({ preview }, i) => (
+                    <div key={i} className="relative">
+                      <img
+                        src={preview}
+                        alt={`Photo ${i + 1}`}
+                        className="rounded-md w-full h-20 object-cover border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(i)}
+                        className="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full p-0.5"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-md p-3 cursor-pointer text-sm text-gray-500 hover:border-gray-400 transition-colors">
+                <Camera className="h-4 w-4" />
+                Prendre ou ajouter une photo
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  multiple
+                  onChange={handleAddPhotos}
+                  className="hidden"
+                />
+              </label>
+            </div>
           </div>
           <div className="flex gap-3">
             <Button
