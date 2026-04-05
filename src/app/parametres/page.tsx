@@ -4,6 +4,7 @@ import { GestionFournisseurs } from "@/components/gestion-fournisseurs";
 import { NotificationsToggle } from "@/components/notifications-toggle";
 import { TemperatureConfig } from "@/components/temperature-config";
 import { NettoyageConfig } from "@/components/nettoyage-config";
+import { SurfacesConfig } from "@/components/surfaces-config";
 
 export default function ParametresPage() {
   return (
@@ -24,6 +25,7 @@ export default function ParametresPage() {
             <GestionFournisseurs />
             <TemperatureConfig />
             <NettoyageConfig />
+            <SurfacesConfig />
           </div>
         </section>
         <section>

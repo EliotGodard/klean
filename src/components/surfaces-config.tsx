@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -106,52 +106,63 @@ export function SurfacesConfig({ onUpdate }: { onUpdate?: () => void }) {
   }
 
   if (loading) {
-    return <p className="text-sm text-gray-500 p-4">Chargement…</p>;
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-sm text-gray-500">Chargement…</p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
     <>
-      <div className="p-4 space-y-3">
-        <div className="flex justify-end">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Surfaces</CardTitle>
           <Button size="sm" onClick={openAdd}>
             <Plus className="h-4 w-4 mr-1" />
             Ajouter
           </Button>
-        </div>
-
-        {surfaces.length === 0 ? (
-          <p className="text-sm text-gray-500">Aucune surface configurée.</p>
-        ) : (
-          surfaces.map((s) => (
-            <Card key={s.id}>
-              <CardContent className="flex items-center justify-between p-3">
-                <p className="font-medium text-sm">{s.nom}</p>
-                <div className="flex gap-1 ml-2 shrink-0">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => openEdit(s)}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-red-500 hover:text-red-600"
-                    onClick={() => {
-                      setDeleting(s);
-                      setDeleteDialogOpen(true);
-                    }}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+        </CardHeader>
+        <CardContent>
+          {surfaces.length === 0 ? (
+            <p className="text-sm text-gray-500">Aucune surface configurée.</p>
+          ) : (
+            <div className="space-y-3">
+              {surfaces.map((s) => (
+                <div
+                  key={s.id}
+                  className="flex items-center justify-between rounded-lg border p-3"
+                >
+                  <p className="font-medium text-sm">{s.nom}</p>
+                  <div className="flex gap-1 ml-2 shrink-0">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => openEdit(s)}
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 text-red-500 hover:text-red-600"
+                      onClick={() => {
+                        setDeleting(s);
+                        setDeleteDialogOpen(true);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
