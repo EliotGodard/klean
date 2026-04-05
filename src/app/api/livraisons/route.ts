@@ -10,7 +10,7 @@ export async function GET(request: Request) {
 
   let query = supabase
     .from("livraisons")
-    .select("*, fournisseurs(nom), non_conformites(*), livraison_photos(*)")
+    .select("*, fournisseurs(nom, categorie_produits, telephone, email, numero_agrement), non_conformites(*), livraison_photos(*)")
     .order("date", { ascending: false });
 
   if (fournisseurId) query = query.eq("fournisseur_id", fournisseurId);
